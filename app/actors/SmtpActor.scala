@@ -26,7 +26,10 @@ class SmtpActor extends Actor {
 			    sender ! EmailSended(email.campaignId, email.subscriberId)
 			}
 		    catch {
-		    	case e: Exception => sender ! EmailException(e, email.campaignId, email.subscriberId)
+		    	case e: Exception => {
+		    	  e.printStackTrace()
+		    	  sender ! EmailException(e, email.campaignId, email.subscriberId)
+		    	}
 		    }
 		}
 	}

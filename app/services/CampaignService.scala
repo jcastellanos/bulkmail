@@ -4,7 +4,7 @@ import play.api.Play.current
 import anorm._
 import play.api.db._
 import sql.CampaignSql
-import sql.EmailSql
+import sql.MailSql
 import services.ConfigurationService._
 
 object CampaignService {
@@ -35,7 +35,7 @@ object CampaignService {
 	def createEmail(campaignId: Long, subscriberId: Long, unsuscribeToken: String): Option[Long] = {
 		DB.withTransaction { implicit c =>
 		  	CampaignSql.incrementNumQueued(campaignId).executeUpdate()
-			EmailSql.insert(campaignId, subscriberId, unsuscribeToken).executeInsert()						
+			MailSql.insert(campaignId, subscriberId, unsuscribeToken).executeInsert()						
 		}		
 	}
 	
@@ -62,7 +62,7 @@ object CampaignService {
 	
 	def updateEmailSended(campaignId: Long, subscriberId: Long): Unit = {
 		DB.withConnection { implicit c =>
-			EmailSql.updateSended(campaignId, subscriberId).executeUpdate()
+			MailSql.updateSended(campaignId, subscriberId).executeUpdate()
 			CampaignSql.incrementNumSended(campaignId).executeUpdate()
 		}		
 	}

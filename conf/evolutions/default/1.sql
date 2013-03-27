@@ -45,15 +45,15 @@ CREATE TABLE subscriber
   CONSTRAINT mail_key UNIQUE (email)
 );
 
-CREATE TABLE email
+CREATE TABLE mail
 (
   campaign_id integer NOT NULL,
   subscriber_id integer NOT NULL,
   queued timestamp without time zone NOT NULL,
   sended timestamp without time zone,  
   unsuscribe_token character varying(20) NOT NULL,
-  CONSTRAINT email_pkey PRIMARY KEY (campaign_id, subscriber_id),
-  CONSTRAINT email_campaign_id_fkey FOREIGN KEY (campaign_id)
+  CONSTRAINT mail_pkey PRIMARY KEY (campaign_id, subscriber_id),
+  CONSTRAINT mail_campaign_id_fkey FOREIGN KEY (campaign_id)
       REFERENCES campaign (id) MATCH SIMPLE
       ON UPDATE NO ACTION ON DELETE NO ACTION,
   CONSTRAINT email_subscriber_id_fkey FOREIGN KEY (subscriber_id)

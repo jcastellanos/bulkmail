@@ -5,7 +5,7 @@ import anorm._
 import play.api.db._
 import sql.SubscriberSql
 import anorm.SqlParser._
-import sql.EmailSql
+import sql.MailSql
 
 object SubscriberService {
   
@@ -46,7 +46,7 @@ object SubscriberService {
 	 */
 	def getSubscriberByUnsuscribeData(subscriberId: Long, unsuscribeToken: String): Option[(Long, String)] = {
 		DB.withConnection { implicit c =>
-		  	val list = EmailSql.selectSubscriberBySubscriberIdAndUnsuscribeToken(subscriberId, unsuscribeToken).as(
+		  	val list = MailSql.selectSubscriberBySubscriberIdAndUnsuscribeToken(subscriberId, unsuscribeToken).as(
 		  		long("id") ~ str("email") map(flatten) *
 		  	)
 		  	if(list.length == 1) {
