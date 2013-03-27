@@ -4,6 +4,11 @@
 
 # Home page
 GET     /                           controllers.Application.index
+GET     /bulk                          controllers.BulkController.index
+POST    /bulk/onupload                          controllers.BulkController.onupload
+POST    /bulk/onpreview                          controllers.BulkController.onpreview
+POST    /bulk/onsendmassive                          controllers.BulkController.onsendmassive
+POST    /bulk/onsave                          controllers.BulkController.onsave
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.at(path="/public", file)

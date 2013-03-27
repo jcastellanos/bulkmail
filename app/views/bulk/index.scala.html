@@ -1,0 +1,142 @@
+@(message: String)
+
+@main("Bulk mail") {
+		<div id="status">
+		
+		</div>
+		<legend>Crear campa&ntilde;a</legend>
+		<fieldset class="form">
+			<label>Campa&ntilde;a</label>
+	    	<div data-role="fieldcontainer">	
+				<form enctype="multipart/form-data">
+					<input name="name" type="text" id="name" maxlength="150"/>
+					<span class="help-block">Ingrese el nombre de la campa&ntilde;a</span>
+				</form>
+			</div>
+			
+		</fieldset>
+    	<fieldset class="form">
+    		<label>Lista de emails</label>
+	    	<div data-role="fieldcontainer">	
+				<form enctype="multipart/form-data">
+					<input name="file" type="file" />					
+					<span class="help-block" id="statusupload">Seleccione un archivo plano, un email por linea.</span>
+				</form>
+				<!--  <progress></progress>		-->	
+			</div>			
+		</fieldset>
+		<fieldset class="form">
+			<label>Asunto</label>
+	    	<div data-role="fieldcontainer">	
+				<form enctype="multipart/form-data">
+					<input name="subject" type="text" id="subject" maxlength="200" />
+					<span class="help-block">Ingrese el asunto del correo.</span>
+				</form>
+			</div>
+		</fieldset>
+		<fieldset class="form">
+			<label>Contenido</label>
+	    	<div data-role="fieldcontainer">	
+				<form action="/bulk/onpreview" method="post" target="blank" id="formhtml">
+					<textarea rows="10" cols="30" name="body" id="body"></textarea>
+					<input type="button" id="btnpreview" value="Previsualizar" class="btn"/>
+					<!--  <a href="#" target="BLANK">Previsualizar</a> -->					
+				</form>
+			</div>
+		</fieldset>
+		<fieldset class="buttons" id="buttons">				
+				<input type="hidden" name="campaignid" id="campaignid" value="" />
+				<input type="hidden" name="filename" id="filename" value="" />
+				<input type="submit" value="Realizar prueba" class="btn "/>
+				<input type="submit" value="Guardar" id="btnsave" class="btn" />
+				<input type="button" value="Enviar masivo" id="btnsendmassive" disabled="disabled" class="btn"/>
+        </fieldset>
+	<script>
+	$(':file').change(function(){
+		$('#statusupload').text("Cargando archivo")
+	    var file = this.files[0];
+	    name = file.name;
+	    size = file.size;
+	    type = file.type;
+	    console.log(type);
+	    
+	    //your validation
+	    if(type == "text/plain") {
+	    var formData = new FormData($('form')[1]);
+		    $.ajax({
+		        url: '/bulk/onupload',  // server script to process data
+		        type: 'POST',
+		        //xhr: function() {  
+		        //    myXhr = $.ajaxSettings.xhr();
+		        //    if(myXhr.upload){ 
+		        //        myXhr.upload.addEventListener('progress',progressHandlingFunction, false); // for handling the progress of the upload
+		        //    }
+		        //    return myXhr;
+		        //},
+		        //Ajax events
+		        //beforeSend: beforeSendHandler,
+		        success: completeHandler,
+		        error: errorHandler,
+		        // Form data
+		        data: formData,
+		        //Options to tell JQuery not to process data or worry about content-type
+		        cache: false,
+		        contentType: false,
+		        processData: false
+		    });
+	    }
+	    else {
+	    	$('#statusupload').text("Debe seleccionar un archivo plano")
+	    }
+	});
+	function completeHandler(e){
+	    console.log(e);
+	    $.globalEval(e)
+	    $("#btnsendmassive").removeAttr("disabled");
+	}
+	function errorHandler(e){
+	    console.log("error");
+	}
+	
+	$('#btnpreview').click(function() {
+		//var caracteristicas = "height=700,width=800,scrollTo,resizable=1,scrollbars=1,location=0";
+      	//nueva=window.open("/bulk/blank", 'Popup', caracteristicas);
+      	//return false;
+      	$("#formhtml").submit();
+	});	
+	
+	$('#btnsave').click(function() {
+		var id = $('#campaignid').val();
+		var name = $('#name').val();
+		var subject = $('#subject').val();
+		var body = $('#body').val();
+		var filename = $('#filename').val();
+
+		$.ajax({	
+			url: '/bulk/onsave',
+			type: 'POST',
+			data: {id: id, name: name, filename: filename, subject: subject, body: body},	
+			success: completeHandler,
+	        error: errorHandler
+		});
+	});
+	
+	$('#btnsendmassive').click(function() {
+		var id = $('#campaignid').val();
+		var name = $('#name').val();
+		var subject = $('#subject').val();
+		var body = $('#body').val();
+		var filename = $('#filename').val();
+
+		$.ajax({	
+			url: '/bulk/onsendmassive',
+			type: 'POST',
+			data: {id: id, name: name, filename: filename, subject: subject, body: body},	
+			success: completeHandler,
+	        error: errorHandler
+		});
+	});
+	
+	</script>
+    
+}
