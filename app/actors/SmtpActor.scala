@@ -1,6 +1,6 @@
 package actors
 import akka.actor.Actor
-import services.EmailService
+import services.MailService
 import services.Mail
 import actors.messages.Email
 import services.ConfigurationService._
@@ -15,14 +15,8 @@ class SmtpActor extends Actor {
 	def receive = {
 		case email: Email =>{
 			try {
-				val emailService  = new EmailService()
-			    val _mail = new Mail()
-			    _mail.setSender(MAIL_FROM)
-			    _mail.setSubject(email.subject)
-			    _mail.setHtmlContent(CampaignService.parseBodyEmail(email.body, Some(email.subscriberId), Some(email.unsuscribeToken)))
-			    _mail.setRecipient("success@simulator.amazonses.com")
 			    //Thread.sleep(1000 / getAwsMessagePerSecond)
-			    emailService.sendMail(_mail)
+			    MailService.send(MAIL_FROM, "success@simulator.amazonses.com", email.subject, CampaignService.parseBodyEmail(email.body, Some(email.subscriberId), Some(email.unsuscribeToken)))
 			    sender ! EmailSended(email.campaignId, email.subscriberId)
 			}
 		    catch {
