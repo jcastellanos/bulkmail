@@ -15,3 +15,6 @@ dist
 /.settings
 conf/evolutions/default/3.sql
 .DS_Store
+.target
+bin
+.cache
